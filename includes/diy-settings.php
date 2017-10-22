@@ -128,20 +128,16 @@
 
     }
 
-    function save_post_meta ( $post_id ) {
-      if ( !current_user_can( 'edit_post', $post_id ) ) {
-        return $post_id;
-      }
+    function meta_boxes () {
 
-      $key = '_' . self::PREFIX . 'difficulty';
+      add_meta_box(
+        self::PREFIX . 'difficulty', 
+        __('DIY Project Details', 
+        self::TEXT_DOMAIN ), 
+        array($this, 'difficulty_box'),
+        'post'
+      );
 
-      if ( !isset( $_POST[$key] ) ) {
-        return $post_id;
-      }
-
-      $value = $_POST[$key];
-
-      update_post_meta( $post_id, $key, $value );
     }
 
     function difficulty_box ( $post ) {
@@ -151,31 +147,43 @@
       ) );
 
       $value = '';
-      $difficulty_setting = get_post_meta( $post->ID, '_' . self::PREFIX . 'difficulty', true );
-      if ( $difficulty_setting ) {
-        $value = $difficulty_setting;
+      $post_terms = wp_get_post_terms( $post->ID, self::PREFIX . 'difficulty' );
+      if ( count( $post_terms ) > 0 ) {
+        $value = $post_terms[0]->slug;
       }
+
       ?>
+        <label>Project Difficulty</label>
         <select class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
-        <?php foreach($terms as $term) { 
-          $selected = '';
-
-          if ( $term->term_id == $value) {
-            $selected = 'selected';
-          }
+          <option></option>
+          <?php foreach($terms as $term) { 
+            $selected = '';
+            if ( $term->slug == $value) {
+              $selected = 'selected';
+            }
           ?>
-
-
-          <option value="<?php echo $term->term_id; ?>" <?php echo $selected; ?>><?php echo $term->name; ?></option>
-        <?php } ?>
+            <option value="<?php echo $term->slug; ?>" <?php echo $selected; ?>>
+              <?php echo $term->name; ?>
+            </option>
+          <?php } ?>
         </select>
       <?php
+
     }
 
-    function meta_boxes () {
+    function save_post_meta ( $post_id ) {
 
-      add_meta_box( self::PREFIX . 'difficulty', __('Project Difficulty', self::TEXT_DOMAIN ), array($this, 'difficulty_box'), 'post' );
+      if ( !current_user_can( 'edit_post', $post_id ) ) {
+        return $post_id;
+      }
+      $key = '_' . self::PREFIX . 'difficulty';
 
+      if ( !isset( $_POST[$key] ) ) {
+        return $post_id;
+      }
+      $value = $_POST[$key];
+      wp_set_object_terms( $post_id, $value, self::PREFIX . 'difficulty');
+      
     }
 
  }
