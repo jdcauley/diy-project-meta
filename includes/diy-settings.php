@@ -10,9 +10,36 @@
 
       add_action( 'admin_menu', array( $this, 'update_admin_menu' ) );
 
+      add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ));
+
+      add_filter( 'update_option', array( $this, 'options_saved') );
+
+      add_action( 'save_post', array( $this, 'save_post_meta') );
+
+    }
+
+    function options_saved ( $data ) {
+
+      if ( isset( $_POST['diy_meta_new_term'] ) ) {
+        $term_name = sanitize_text_field( $_POST['diy_meta_new_term'] );
+        wp_insert_term( $term_name, self::PREFIX . 'difficulty', array() );
+      }
+
+    }
+
+    function admin_enqueue ( $hook ) {
+
+      if ( $hook != 'toplevel_page_diy_meta_plugin' ) {
+        return;
+      }
+
+      wp_register_script( self::PLUGIN_DOMAIN . '/settings.js', self::assets_url() . '/dist/scripts/settings.js' );
+      wp_enqueue_script( self::PLUGIN_DOMAIN . '/settings.js' );
+
     }
 
     function options_page () {
+
       ?>
         <form action='options.php' method='post'>
 
@@ -48,17 +75,31 @@
 
     function difficulty_settings ( $arg ) {
 
-        $options = get_option( self::PREFIX . 'settings' );
-        $name = self::PREFIX . 'settings' . '[test_field]';
-      
+      $terms = get_terms( array(
+        'taxonomy' => self::PREFIX . 'difficulty',
+        'hide_empty' => false
+      ) );
+
+      // print_r( $terms );
+
       ?>
-        <h4>Create Your Difficulty Options</h4>
-        <span>Add as many options for difficulty settings as you would like, these will be displayed in your posts editor</span>
+        <h3>Difficulty Options</h3>
+        <ul>
+      <?php
 
+      foreach ( $terms as $term ) {
+        ?>
+        <li>
+          <h4><?php echo $term->name; ?></h4>
+        </li>
+        <?php
+      }
+
+      ?>
+    </ul>
         <div>
-          <input type="text" name="<?php echo $name; ?>" value="<?php echo $options['test_field']; ?>">
+          <input class="regular-text" name="<?php echo self::PREFIX . 'new_term'; ?>" value="" placeholder="new term">
         </div>
-
       <?php
 
     }
@@ -87,14 +128,46 @@
 
     }
 
+    function save_post_meta ( $post_id ) {
+      if ( !current_user_can( 'edit_post', $post_id ) ) {
+        return $post_id;
+      }
+
+      $key = '_' . self::PREFIX . 'difficulty';
+
+      if ( !isset( $_POST[$key] ) ) {
+        return $post_id;
+      }
+
+      $value = $_POST[$key];
+
+      update_post_meta( $post_id, $key, $value );
+    }
+
     function difficulty_box ( $post ) {
+      $terms = get_terms( array(
+        'taxonomy' => self::PREFIX . 'difficulty',
+        'hide_empty' => false
+      ) );
+
+      $value = '';
+      $difficulty_setting = get_post_meta( $post->ID, '_' . self::PREFIX . 'difficulty', true );
+      if ( $difficulty_setting ) {
+        $value = $difficulty_setting;
+      }
       ?>
-        <select class="" name="diy_project_difficulty">
-          <option value="1">Easy</option>
-          <option value="2">Pretty Easy</option>
-          <option value="3">Kind of Hard</option>
-          <option value="4">Difficult</option>
-          <option value="5">Very Difficult</option>
+        <select class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
+        <?php foreach($terms as $term) { 
+          $selected = '';
+
+          if ( $term->term_id == $value) {
+            $selected = 'selected';
+          }
+          ?>
+
+
+          <option value="<?php echo $term->term_id; ?>" <?php echo $selected; ?>><?php echo $term->name; ?></option>
+        <?php } ?>
         </select>
       <?php
     }
