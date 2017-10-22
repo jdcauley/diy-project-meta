@@ -60,7 +60,9 @@ class DIY_Project_Meta {
 
 }
 
-require_once('includes/diy-settings.php');
+require_once('includes/plugin-settings.php');
+require_once('includes/post-settings.php';)
 
 $diy = new DIY_Project_Meta();
 $settings = new DIY_Settings();
+$settings = new DIY_Post_Meta();
