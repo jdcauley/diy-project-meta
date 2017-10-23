@@ -12,6 +12,8 @@
 
       add_action( 'wp_enqueue_scripts', array( $this, 'public_styles') );
 
+      add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ));
+
     }
 
     function public_styles () {
@@ -20,28 +22,55 @@
 
     }
 
+    function admin_enqueue ( $hook ) {
+      
+      if ( $hook != 'post.php') {
+        return;
+      }
+
+      wp_enqueue_style( self::PLUGIN_DOMAIN . '/post-editor.css', self::assets_url() . '/dist/styles/post-editor.css' );
+
+    }
+
     function add_meta_to_content ( $content ) {
 
       $options = get_option( self::PREFIX . 'settings' );
 
       $post_id = get_the_id();
+      $time_key = '_' . self::PREFIX . 'time';
+      $cost_key = '_' . self::PREFIX . 'cost';
 
       $post_terms = wp_get_post_terms( $post_id, self::PREFIX . 'difficulty' );
 
-      $meta = '';
-      $style = '';
+      $meta = $style = $difficulty = $time = $cost = '';
+
+      $time = get_post_meta($post_id, $time_key, true);
+      $cost = get_post_meta($post_id, $cost_key, true);
 
       if ( isset( $options['bg-color'] ) ) {
         $style = 'style="background-color: ' . $options['bg-color'] . ';"';
       }
 
-
-      if ( count( $post_terms ) > 0 ) {
+      if ( count($post_terms) > 0 ) {
         $post_term = $post_terms[0];
+        $difficulty = '<span class="diy-meta-entry diy-meta-difficulty">Project Difficulty: ' . $post_term->name . '</span>';
+      }
+
+      if ( $time ) {
+        $time = '<span class="diy-meta-entry diy-meta-time">Estimated Time: ' . $time . '</span>';
+      }
+
+      if ( $cost ) {
+        $cost = '<span class="diy-meta-entry diy-meta-time">Estimated Cost: ' . $cost . '</span>';
+      }
+
+
+      if ( $difficulty || $time || $cost ) {
+        
         ob_start();
       ?>
         <div class="diy-meta" <?php echo $style; ?>>
-          <h4>Project Difficulty: <?php echo $post_term->name; ?></h4>
+          <?php echo $difficulty; ?><?php echo $time; ?><?php echo $cost; ?>
         </div>
       <?php
         $meta = ob_get_clean();
@@ -65,7 +94,9 @@
     function difficulty_box ( $post ) {
       $terms = get_terms( array(
         'taxonomy' => self::PREFIX . 'difficulty',
-        'hide_empty' => false
+        'hide_empty' => false,
+        'orderby' => 'term_id', 
+        'order' => 'ASC'
       ) );
 
       $value = '';
@@ -74,10 +105,16 @@
         $value = $post_terms[0]->slug;
       }
 
+      $time_key = '_' . self::PREFIX . 'time';
+      $cost_key = '_' . self::PREFIX . 'cost';
+
+      $time = get_post_meta($post->ID, $time_key, true);
+      $cost = get_post_meta($post->ID, $cost_key, true);
+
       ?>
-        <div class="input-group">
-          <label>How Hard is the Project?</label>
-          <select class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
+        <div class="diy-input-group">
+          <label for="diy-project-meta-difficulty">How Hard is the Project?</label>
+          <select id="diy-project-meta-difficulty" class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
             <option></option>
             <?php foreach($terms as $term) { 
               $selected = '';
@@ -91,13 +128,13 @@
             <?php } ?>
           </select>
         </div>
-        <div class="input-group">
-          <label>How long will the Project Take?<label>
-          <input type="text">
+        <div class="diy-input-group">
+          <label for="diy-project-meta-length">How long will the Project Take?</label>
+          <input id="diy-project-meta-length" type="text" name="_<?php echo self::PREFIX; ?>time" class="regular-text" value="<?php echo $time; ?>">
         </div>
-        <div class="input-group">
-          <label>How Much with the Project Cost?<label>
-          <input type="text">
+        <div class="diy-input-group">
+          <label for="diy-project-meta-cost">How Much with the Project Cost?</label>
+          <input id="diy-project-meta-cost" type="text" name="_<?php echo self::PREFIX; ?>cost" class="regular-text" value="<?php echo $cost; ?>">
         </div>
       <?php
 
@@ -108,13 +145,26 @@
       if ( !current_user_can( 'edit_post', $post_id ) ) {
         return $post_id;
       }
-      $key = '_' . self::PREFIX . 'difficulty';
 
-      if ( !isset( $_POST[$key] ) ) {
-        return $post_id;
+      $difficulty_key = '_' . self::PREFIX . 'difficulty';
+      $time_key = '_' . self::PREFIX . 'time';
+      $cost_key = '_' . self::PREFIX . 'cost';
+
+      if ( isset( $_POST[$difficulty_key] ) ) {
+        $value = $_POST[$difficulty_key];
+        wp_set_object_terms( $post_id, $value, self::PREFIX . 'difficulty');
+
       }
-      $value = $_POST[$key];
-      wp_set_object_terms( $post_id, $value, self::PREFIX . 'difficulty');
+
+      if ( isset($_POST[$time_key]) ) {
+        $time = sanitize_text_field($_POST[$time_key]);
+        update_post_meta( $post_id, $time_key, $time);
+      }
+
+      if ( isset($_POST[$cost_key]) ) {
+        $cost = sanitize_text_field($_POST[$cost_key]);
+        update_post_meta( $post_id, $cost_key, $cost);
+      }
       
     }
   }

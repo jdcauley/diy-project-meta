@@ -51,7 +51,40 @@
 
     }
 
+    function get_custom_terms ( WP_REST_Request $request ) {
+
+      $terms = get_terms( array(
+        'taxonomy' => self::PREFIX . 'difficulty',
+        'hide_empty' => false,
+        'orderby' => 'term_id', 
+        'order' => 'ASC'
+      ) );
+
+      if ( is_wp_error($terms) ) {
+        $response = new WP_REST_Response( $terms );
+        $response->set_status( 500 );
+        return $response;
+      }
+
+      $response = new WP_REST_Response( $terms );
+      $response->set_status( 200 );
+
+      return $response;
+    }
+
     function create_rest_routes () {
+
+      register_rest_route(
+        self::PLUGIN_DOMAIN . '/' . self::API_VERSION, 
+        '/' . self::PREFIX . 'difficulty/', 
+        array(
+          'methods' => 'GET',
+          'callback' => array( $this, 'get_custom_terms' ),
+          'permission_callback' => function () {
+            return current_user_can( 'manage_options' );
+          }
+        )
+      );
 
       register_rest_route(
         self::PLUGIN_DOMAIN . '/' . self::API_VERSION, 

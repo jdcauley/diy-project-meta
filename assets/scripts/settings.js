@@ -5,9 +5,9 @@
     notices: [],
     termTemplate (item) {
       return `
-        <li class="difficulty-term" data-term-id="${item.id}">
+        <li class="difficulty-term" data-term-id="${item.term_id}">
           <h3>${item.name}</h3>
-          <a href="#" class="term-delete" data-term-id="${item.id}">Delete</a>
+          <a href="#" class="term-delete" data-term-id="${item.term_id}">Delete</a>
         </li>
       `
     },
@@ -41,9 +41,18 @@
       this.renderNotices()
     },
     getTerms () {
-      let reqURl = `${window.wpApiSettings.root}wp/v2/diy_meta_difficulty`
-      $.getJSON(reqURl, (data) => {
-        Settings.termData = data
+      let reqUrl = `${window.wpApiSettings.root}diy_meta_plugin/v1/diy_meta_difficulty`
+
+      $.ajax({
+        url: reqUrl,
+        method: 'GET',
+        beforeSend: (xhr) => {
+          xhr.setRequestHeader(`X-WP-Nonce`, window.wpApiSettings.nonce)
+        }
+      })
+      .done((response, textStatus, jqXHR) => {
+        Settings.termData = response
+        console.log(response)
       })
     },
     deleteTerm (termId) {
@@ -120,8 +129,6 @@
 
   $(document).ready(() => {
     Settings.init()
-    $('.bg-color-picker').wpColorPicker();
+    $('.bg-color-picker').wpColorPicker()
   })
-
-
 })(window.jQuery)

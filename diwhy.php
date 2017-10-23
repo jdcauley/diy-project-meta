@@ -24,6 +24,9 @@ class DIY_Project_Meta {
 
     add_action( 'init', array($this, 'add_difficulty_term') );
 
+    register_activation_hook( __FILE__, array($this, 'plugin_activation') );
+    register_deactivation_hook( __FILE__, array($this, 'plugin_deactivation') );
+
   }
 
   public static function assets_url () {
@@ -57,6 +60,33 @@ class DIY_Project_Meta {
 
     register_taxonomy( self::PREFIX . 'difficulty', array('post'), $term );
 
+  }
+
+  function plugin_activation () {
+    /* Create Baseline Difficulty Options */
+    $default_difficulties = array(
+      'Very Easy', 'Easy', 'Moderate', 'Hard', 'Very Hard'
+    );
+    $this->add_difficulty_term();
+    foreach ( $default_difficulties as $level ) {
+      $term = wp_insert_term( $level, self::PREFIX . 'difficulty', array() );
+      error_log( print_r($term, true ) );
+    }
+
+  }
+
+  function plugin_deactivation () {
+
+    $terms = get_terms( array(
+      'taxonomy' => self::PREFIX . 'difficulty',
+      'hide_empty' => false
+    ) );
+
+    foreach ( $terms as $term ) {
+      $deleted = wp_delete_term( $term->term_id, self::PREFIX . 'difficulty' );
+    }
+
+    
   }
 
 }

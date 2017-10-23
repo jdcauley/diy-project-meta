@@ -83,7 +83,9 @@
 
       $terms = get_terms( array(
         'taxonomy' => self::PREFIX . 'difficulty',
-        'hide_empty' => false
+        'hide_empty' => false,
+        'orderby' => 'term_id', 
+        'order' => 'ASC'
       ) );
 
       ?>
