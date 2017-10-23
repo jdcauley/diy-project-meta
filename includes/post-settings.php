@@ -8,6 +8,46 @@
 
       add_action( 'save_post', array( $this, 'save_post_meta') );
 
+      add_filter( 'the_content', array( $this, 'add_meta_to_content' ) );
+
+      add_action( 'wp_enqueue_scripts', array( $this, 'public_styles') );
+
+    }
+
+    function public_styles () {
+
+      wp_enqueue_style( self::PLUGIN_DOMAIN . '/diy-meta.css', self::assets_url() . '/dist/styles/diy-meta.css' );
+
+    }
+
+    function add_meta_to_content ( $content ) {
+
+      $options = get_option( self::PREFIX . 'settings' );
+
+      $post_id = get_the_id();
+
+      $post_terms = wp_get_post_terms( $post_id, self::PREFIX . 'difficulty' );
+
+      $meta = '';
+      $style = '';
+
+      if ( isset( $options['bg-color'] ) ) {
+        $style = 'style="background-color: ' . $options['bg-color'] . ';"';
+      }
+
+
+      if ( count( $post_terms ) > 0 ) {
+        $post_term = $post_terms[0];
+        ob_start();
+      ?>
+        <div class="diy-meta" <?php echo $style; ?>>
+          <h4>Project Difficulty: <?php echo $post_term->name; ?></h4>
+        </div>
+      <?php
+        $meta = ob_get_clean();
+      }
+      $content = $meta . $content;
+      return $content;
     }
 
     function meta_boxes () {

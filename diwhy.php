@@ -52,6 +52,7 @@ class DIY_Project_Meta {
       'show_ui'           => false,
       'show_admin_column' => true,
       'query_var'         => true,
+      'show_in_rest'      => true
     );
 
     register_taxonomy( self::PREFIX . 'difficulty', array('post'), $term );
@@ -61,8 +62,10 @@ class DIY_Project_Meta {
 }
 
 require_once('includes/plugin-settings.php');
-require_once('includes/post-settings.php';)
+require_once('includes/post-settings.php');
+require_once('includes/extend-api.php');
 
 $diy = new DIY_Project_Meta();
 $settings = new DIY_Settings();
-$settings = new DIY_Post_Meta();
+$post_settings = new DIY_Post_Meta();
+$extend_rest = new DIY_Rest();

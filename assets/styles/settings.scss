@@ -1,0 +1,63 @@
+.section-title {
+  margin-bottom: 5px;
+}
+
+.help-text {
+  margin-bottom: 10px;
+}
+
+.difficulty-term-list {
+  overflow: scroll;
+  max-height: 200px;
+  border: 1px solid #e5e5e5;
+  max-width: 500px;
+}
+
+.difficulty-term {
+  padding: 10px 15px;
+  margin-bottom: 2px;
+  background-color: #fff;
+  // border-bottom: 1px solid #3C4546;
+  h3 {
+    display: inline-block;
+    margin: 0;
+
+  }
+  .term-delete {
+    display: none;
+    color: #a00;
+    text-decoration: none;
+    float: right;
+  }
+  &:hover,
+  &:focus {
+    .term-delete {
+      display: inline-block;
+    }
+  }
+}
+
+.notifications {
+  max-width: 500px;
+  .update {
+    padding: 6px 12px;
+    border-left: 4px solid #46b450;
+    background-color: #fff;
+    p {
+      margin-top: 0;
+    }
+  }
+  div.error {
+    padding: 6px 12px;
+    margin: 0;
+    p {
+      margin-top: 0;
+    }
+  }
+}
+
+.term-create-input {
+  padding: 4px 8px;
+  font-size: 16px;
+}
+

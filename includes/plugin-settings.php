@@ -20,9 +20,15 @@
         return;
       }
 
-      wp_enqueue_style( self::PLUGIN_DOMAIN . '/settings.css', )
+      wp_enqueue_style( self::PLUGIN_DOMAIN . '/settings.css', self::assets_url() . '/dist/styles/settings.css' );
 
-      wp_register_script( self::PLUGIN_DOMAIN . '/settings.js', self::assets_url() . '/dist/scripts/settings.js' );
+      wp_enqueue_style( 'wp-color-picker' );
+
+      wp_register_script( self::PLUGIN_DOMAIN . '/settings.js', self::assets_url() . '/dist/scripts/settings.js', array( 'wp-color-picker' ) );
+      wp_localize_script( self::PLUGIN_DOMAIN . '/settings.js', 'wpApiSettings', array(
+        'root' => esc_url_raw( rest_url() ),
+        'nonce' => wp_create_nonce( 'wp_rest' )
+      ) );
       wp_enqueue_script( self::PLUGIN_DOMAIN . '/settings.js' );
 
     }
@@ -81,20 +87,38 @@
       ) );
 
       ?>
-        <h3>Difficulty Options</h3>
-        <ul>
+        <p class="help-text">Add custom difficulty options to select and display in posts</p>
+        <div id="term-notices" class="notifications">
+        </div>
+        <ul id="difficulty-term-list" class="difficulty-term-list">
       <?php foreach ( $terms as $term ) { ?>
-        <li>
-          <h4><?php echo $term->name; ?></h4>
+        <li class="difficulty-term" data-term-id="<?php echo $term->term_id; ?>">
+          <h3><?php echo $term->name; ?></h3>
+          <a href="#" class="term-delete" data-term-id="<?php echo $term->term_id; ?>">Delete</a>
         </li>
       <?php } ?>
 
         </ul>
-        <div>
-          <input class="regular-text" name="<?php echo self::PREFIX . 'new_term'; ?>" value="" placeholder="new term">
+        <div class="difficulty-term-create">
+          <input id="<?php echo self::PREFIX . 'new_term'; ?>" class="regular-text term-create-input" name="<?php echo self::PREFIX . 'new_term'; ?>" value="" placeholder="new term">
+          <button id="<?php echo self::PREFIX . 'new_term-button'; ?>" class="button button-primary" type="submit">Add</button>
         </div>
 
 
+      <?php
+
+    }
+
+    function background_color () {
+
+      $options = get_option( self::PREFIX . 'settings' );
+      $field_name = self::PREFIX . 'settings[bg-color]';
+      $value = '';
+      if ( isset($options['bg-color']) ) {
+        $value = sanitize_text_field($options['bg-color']);
+      }
+      ?>
+        <input type="text" name="<?php echo $field_name; ?>" class="bg-color-picker" value="<?php echo $value; ?>">
       <?php
 
     }
@@ -114,9 +138,17 @@
       );
       
       add_settings_field(
-        self::PREFIX . 'test_field',
-        __( 'Difficulty Options', self::TEXT_DOMAIN ),
+        self::PREFIX . 'difficulty_settings',
+        __( 'Difficulty Level', self::TEXT_DOMAIN ),
         array( $this, 'difficulty_settings' ),
+        self::PLUGIN_DOMAIN,
+        self::PREFIX . 'settings_difficulty_options'
+      );
+
+      add_settings_field(
+        self::PREFIX . 'display_background',
+        __( 'Background Color', self::TEXT_DOMAIN ),
+        array( $this, 'background_color' ),
         self::PLUGIN_DOMAIN,
         self::PREFIX . 'settings_difficulty_options'
       );
