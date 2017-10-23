@@ -2,8 +2,9 @@
 
 /* 
   Plugin Name: DIY Project Meta
-  Description: Information on DIY Projects
+  Description: Set DIY Project info for Posts.
   Author: Jordan Cauley
+  Version: 1.0.0
 */
 
 class DIY_Project_Meta {
@@ -24,6 +25,9 @@ class DIY_Project_Meta {
 
     add_action( 'init', array($this, 'add_difficulty_term') );
 
+    $plugin_hook = 'plugin_action_links_' . plugin_basename( __FILE__ );
+    add_filter( $plugin_hook, array($this, 'plugin_add_settings_link' ) );
+
     register_activation_hook( __FILE__, array($this, 'plugin_activation') );
     register_deactivation_hook( __FILE__, array($this, 'plugin_deactivation') );
 
@@ -31,6 +35,12 @@ class DIY_Project_Meta {
 
   public static function assets_url () {
     return plugin_dir_url( __FILE__ );
+  }
+
+  function plugin_add_settings_link ( $links ) {
+    $settings_link = '<a href="admin.php?page=' . self::PLUGIN_DOMAIN . '">' . __( 'Settings' ) . '</a>';
+    array_push( $links, $settings_link );
+    return $links;
   }
 
   function add_difficulty_term () {
@@ -70,7 +80,6 @@ class DIY_Project_Meta {
     $this->add_difficulty_term();
     foreach ( $default_difficulties as $level ) {
       $term = wp_insert_term( $level, self::PREFIX . 'difficulty', array() );
-      error_log( print_r($term, true ) );
     }
 
   }
