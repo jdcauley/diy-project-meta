@@ -1,6 +1,6 @@
 <?php
 
- class DIY_Settings extends DIY_Project_Meta {
+  class DIY_Settings extends DIY_Project_Meta {
 
     function __construct () {
 
@@ -90,22 +90,21 @@
 
       ?>
         <p class="help-text">Add custom difficulty options to select and display in posts</p>
-        <div id="term-notices" class="notifications">
-        </div>
+        <div id="term-notices" class="notifications"></div>
+        
         <ul id="difficulty-term-list" class="difficulty-term-list">
-      <?php foreach ( $terms as $term ) { ?>
-        <li class="difficulty-term" data-term-id="<?php echo $term->term_id; ?>">
-          <h3><?php echo $term->name; ?></h3>
-          <a href="#" class="term-delete" data-term-id="<?php echo $term->term_id; ?>">Delete</a>
-        </li>
-      <?php } ?>
-
+        <?php foreach ( $terms as $term ) { ?>
+          <li class="difficulty-term" data-term-id="<?php echo $term->term_id; ?>">
+            <h3><?php echo $term->name; ?></h3>
+            <a href="#" class="term-delete" data-term-id="<?php echo $term->term_id; ?>">Delete</a>
+          </li>
+        <?php } ?>
         </ul>
+
         <div class="difficulty-term-create">
           <input id="<?php echo self::PREFIX . 'new_term'; ?>" class="regular-text term-create-input" name="<?php echo self::PREFIX . 'new_term'; ?>" value="" placeholder="new term">
           <button id="<?php echo self::PREFIX . 'new_term-button'; ?>" class="button button-primary" type="submit">Add</button>
         </div>
-
 
       <?php
 
@@ -157,4 +156,4 @@
 
     }
 
- }
+  }

@@ -43,7 +43,7 @@ class DIY_Project_Meta {
     return $links;
   }
 
-  function add_difficulty_term () {
+  public static function add_difficulty_term () {
 
     $labels = array(
       'name'              => _x( 'Difficulty', 'taxonomy general name', self::TEXT_DOMAIN ),
@@ -72,19 +72,19 @@ class DIY_Project_Meta {
 
   }
 
-  function plugin_activation () {
+  public static function plugin_activation () {
     /* Create Baseline Difficulty Options */
     $default_difficulties = array(
       'Very Easy', 'Easy', 'Moderate', 'Hard', 'Very Hard'
     );
-    $this->add_difficulty_term();
+    self::add_difficulty_term();
     foreach ( $default_difficulties as $level ) {
       $term = wp_insert_term( $level, self::PREFIX . 'difficulty', array() );
     }
 
   }
 
-  function plugin_deactivation () {
+  public static function plugin_deactivation () {
 
     $terms = get_terms( array(
       'taxonomy' => self::PREFIX . 'difficulty',

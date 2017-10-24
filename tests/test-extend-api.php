@@ -26,10 +26,6 @@ class Extend_API_Test extends WP_UnitTestCase {
 
   }
 
-  public function tearDown() {
-    unset($_REQUEST['security']);
-  }
-
   /* Check for Custom Routes */
   public function test_register_route() {
 
