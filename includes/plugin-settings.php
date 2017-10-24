@@ -14,6 +14,7 @@
 
     }
 
+    /* Enqueue Scripts for Load Scripts and Styles for DIY Meta Project */
     function admin_enqueue ( $hook ) {
 
       if ( $hook != 'toplevel_page_diy_meta_plugin' ) {
@@ -33,6 +34,7 @@
 
     }
 
+    /* Save Term if no JS */
     function options_saved ( $data ) {
 
       if ( isset( $_POST['diy_meta_new_term'] ) ) {
@@ -42,6 +44,7 @@
 
     }
 
+    /* Render Options Page */
     function options_page () {
 
       ?>
@@ -57,7 +60,8 @@
       <?php
 
     }
-   
+
+    /* Add Option Menu and to Dashboard */
     function update_admin_menu () {
 
       add_menu_page(
@@ -71,12 +75,14 @@
 
     }
 
+    /* Setting Page Markup */
     function settings_page_title ( $arg ) {
       ?>
         <h1><?php __( 'DIY Meta Settings', self::TEXT_DOMAIN ); ?></h1>
       <?php
     }
 
+    /* Difficulty Settings Markup */
     function difficulty_settings ( $arg ) {
 
       $options = get_option( self::PREFIX . 'settings' );
@@ -110,6 +116,7 @@
 
     }
 
+    /* Background Color Field and Markup */
     function background_color () {
 
       $options = get_option( self::PREFIX . 'settings' );
@@ -118,10 +125,9 @@
       if ( isset($options['bg-color']) ) {
         $value = sanitize_text_field($options['bg-color']);
       }
-      ?>
+    ?>
         <input type="text" name="<?php echo $field_name; ?>" class="bg-color-picker" value="<?php echo $value; ?>">
-      <?php
-
+    <?php
     }
 
     function settings_page () {
@@ -131,25 +137,28 @@
         self::PREFIX . 'settings'
       );
 
+      /* Create Setting Section */
       add_settings_section(
         self::PREFIX . 'settings_difficulty_options',
         __( 'DIY Meta Settings', self::TEXT_DOMAIN),
         array( $this, 'settings_page_title'),
         self::PLUGIN_DOMAIN
       );
-      
-      add_settings_field(
-        self::PREFIX . 'difficulty_settings',
-        __( 'Difficulty Level', self::TEXT_DOMAIN ),
-        array( $this, 'difficulty_settings' ),
-        self::PLUGIN_DOMAIN,
-        self::PREFIX . 'settings_difficulty_options'
-      );
 
+      /* Background Color Setting */
       add_settings_field(
         self::PREFIX . 'display_background',
         __( 'Background Color', self::TEXT_DOMAIN ),
         array( $this, 'background_color' ),
+        self::PLUGIN_DOMAIN,
+        self::PREFIX . 'settings_difficulty_options'
+      );
+
+      /* Form and Mark for Custom Difficulties */
+      add_settings_field(
+        self::PREFIX . 'difficulty_settings',
+        __( 'Difficulty Level', self::TEXT_DOMAIN ),
+        array( $this, 'difficulty_settings' ),
         self::PLUGIN_DOMAIN,
         self::PREFIX . 'settings_difficulty_options'
       );

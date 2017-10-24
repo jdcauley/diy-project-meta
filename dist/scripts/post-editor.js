@@ -1,8 +1,1 @@
-const Numeral = require('numeraljs')
-
-    $('#diy-project-meta-cost').on('input', function(evt) {
-      console.log('input')
-      let Input = $(this)
-      let string = Numeral(Input.val()).format('$0,0.00')
-      Input.val(string)
-    })
+"use strict";!function(t){t.isNumeric=function(t){return/^[0-9.,]+$/.test(t)},t.fn.maskInput=function(){var n=t(this).val();t.isNumeric(n)||(n=n.substring(0,n.length-1)),t(this).val(n)},t(document).ready(function(){t("#diy-project-meta-cost").on("input",function(n){console.log("input"),t(this).maskInput()})})}(jQuery);

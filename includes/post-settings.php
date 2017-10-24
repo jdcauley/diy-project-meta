@@ -16,12 +16,14 @@
 
     }
 
+    /* Public Post Styles */
     function public_styles () {
 
       wp_enqueue_style( self::PLUGIN_DOMAIN . '/diy-meta.css', self::assets_url() . '/dist/styles/diy-meta.css' );
 
     }
 
+    /* Load Admin Styles for Post Editor */
     function admin_enqueue ( $hook ) {
 
       if ( $hook != 'post.php') {
@@ -29,9 +31,15 @@
       }
 
       wp_enqueue_style( self::PLUGIN_DOMAIN . '/post-editor.css', self::assets_url() . '/dist/styles/post-editor.css' );
-
+      wp_register_script( self::PLUGIN_DOMAIN . '/post-editor.js', self::assets_url() . '/dist/scripts/post-editor.js', array( 'jquery' ) );
+      wp_localize_script( self::PLUGIN_DOMAIN . '/post-editor.js', 'wpApiSettings', array(
+        'root' => esc_url_raw( rest_url() ),
+        'nonce' => wp_create_nonce( 'wp_rest' )
+      ) );
+      wp_enqueue_script( self::PLUGIN_DOMAIN . '/post-editor.js' );
     }
 
+    /* Load Meta into Content */
     function add_meta_to_content ( $content ) {
 
       $options = get_option( self::PREFIX . 'settings' );
@@ -80,12 +88,12 @@
 
     }
 
+    /* Meta box for adding DIY Meta to Posts */
     function meta_boxes () {
 
       add_meta_box(
         self::PREFIX . 'difficulty', 
-        __('DIY Project Details', 
-        self::TEXT_DOMAIN ), 
+        __('DIY Project Details', self::TEXT_DOMAIN ), 
         array($this, 'difficulty_box'),
         'post'
       );
@@ -131,16 +139,19 @@
         </div>
         <div class="diy-input-group">
           <label for="diy-project-meta-length">How long will the Project Take?</label>
-          <input id="diy-project-meta-length" type="text" name="_<?php echo self::PREFIX; ?>time" class="regular-text" value="<?php echo $time; ?>">
+          <input id="diy-project-meta-length" type="text" name="_<?php echo self::PREFIX; ?>time" class="regular-text diy-project-meta-length" value="<?php echo $time; ?>">
         </div>
         <div class="diy-input-group">
           <label for="diy-project-meta-cost">How Much with the Project Cost?</label>
-          <input id="diy-project-meta-cost" type="text" name="_<?php echo self::PREFIX; ?>cost" class="regular-text" value="<?php echo $cost; ?>">
+          <div class="diy-project-meta-cost">
+            <input id="diy-project-meta-cost" type="text" name="_<?php echo self::PREFIX; ?>cost" class="regular-text" value="<?php echo $cost; ?>">
+          </div>
         </div>
       <?php
 
     }
 
+    /* Logic for saving Meta to Post */
     function save_post_meta ( $post_id ) {
 
       if ( !current_user_can( 'edit_post', $post_id ) ) {

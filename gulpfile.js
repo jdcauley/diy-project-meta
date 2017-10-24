@@ -15,17 +15,12 @@ const buffer = require('gulp-buffer')
 
 gulp.task('scripts', () => {
   console.log('running scripts')
-  return gulp.src('./assets/scripts/*.js', {read: false})
+  return gulp.src('./assets/scripts/*.js')
     .pipe(standard())
     .pipe(standard.reporter('default', {
       breakOnError: false,
       quiet: true
     }))
-    .pipe(tap(function (file) {
-      gutil.log('bundling ' + file.path);
-      file.contents = browserify(file.path, {debug: true}).bundle();
-    }))
-    .pipe(buffer())
     .pipe( babel({
       presets: ['es2015']
     }))
