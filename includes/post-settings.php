@@ -69,7 +69,7 @@
       }
 
       if ( $cost ) {
-        $cost = '<span class="diy-meta-entry diy-meta-time">Estimated Cost: ' . $cost . '</span>';
+        $cost = '<span class="diy-meta-entry diy-meta-time">Estimated Cost: $' . $cost . '</span>';
       }
 
 
