@@ -130,4 +130,5 @@
     Settings.init()
     $('.bg-color-picker').wpColorPicker()
   })
+
 })(window.jQuery)

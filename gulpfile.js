@@ -8,16 +8,24 @@ const sass = require('gulp-sass')
 const rename = require('gulp-rename')
 const uglify = require('gulp-uglify')
 const sourcemaps = require('gulp-sourcemaps')
+const tap = require('gulp-tap')
 const gutil = require('gulp-util')
+const browserify = require('browserify')
+const buffer = require('gulp-buffer')
 
 gulp.task('scripts', () => {
   console.log('running scripts')
-  return gulp.src('./assets/scripts/*.js')
+  return gulp.src('./assets/scripts/*.js', {read: false})
     .pipe(standard())
     .pipe(standard.reporter('default', {
       breakOnError: false,
       quiet: true
     }))
+    .pipe(tap(function (file) {
+      gutil.log('bundling ' + file.path);
+      file.contents = browserify(file.path, {debug: true}).bundle();
+    }))
+    .pipe(buffer())
     .pipe( babel({
       presets: ['es2015']
     }))
