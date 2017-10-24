@@ -52,7 +52,6 @@
       })
       .done((response, textStatus, jqXHR) => {
         Settings.termData = response
-        console.log(response)
       })
     },
     deleteTerm (termId) {

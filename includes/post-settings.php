@@ -23,7 +23,7 @@
     }
 
     function admin_enqueue ( $hook ) {
-      
+
       if ( $hook != 'post.php') {
         return;
       }
@@ -66,7 +66,7 @@
 
 
       if ( $difficulty || $time || $cost ) {
-        
+
         ob_start();
       ?>
         <div class="diy-meta" <?php echo $style; ?>>
@@ -77,6 +77,7 @@
       }
       $content = $meta . $content;
       return $content;
+
     }
 
     function meta_boxes () {
@@ -153,15 +154,14 @@
       if ( isset( $_POST[$difficulty_key] ) ) {
         $value = $_POST[$difficulty_key];
         wp_set_object_terms( $post_id, $value, self::PREFIX . 'difficulty');
-
       }
 
-      if ( isset($_POST[$time_key]) ) {
+      if ( isset( $_POST[$time_key]) ) {
         $time = sanitize_text_field($_POST[$time_key]);
         update_post_meta( $post_id, $time_key, $time);
       }
 
-      if ( isset($_POST[$cost_key]) ) {
+      if ( isset( $_POST[$cost_key] ) ) {
         $cost = sanitize_text_field($_POST[$cost_key]);
         update_post_meta( $post_id, $cost_key, $cost);
       }
