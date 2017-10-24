@@ -123,28 +123,35 @@
       ?>
         <div class="diy-input-group">
           <label for="diy-project-meta-difficulty">How Hard is the Project?</label>
-          <select id="diy-project-meta-difficulty" class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
-            <option></option>
-            <?php foreach($terms as $term) { 
-              $selected = '';
-              if ( $term->slug == $value) {
-                $selected = 'selected';
-              }
-            ?>
-              <option value="<?php echo $term->slug; ?>" <?php echo $selected; ?>>
-                <?php echo $term->name; ?>
-              </option>
-            <?php } ?>
-          </select>
+          <div class="diy-input-wrap">
+            <select id="diy-project-meta-difficulty" class="" name="_<?php echo self::PREFIX; ?>difficulty" value="<?php echo $value; ?>">
+              <option></option>
+              <?php foreach($terms as $term) { 
+                $selected = '';
+                if ( $term->slug == $value) {
+                  $selected = 'selected';
+                }
+              ?>
+                <option value="<?php echo $term->slug; ?>" <?php echo $selected; ?>>
+                  <?php echo $term->name; ?>
+                </option>
+              <?php } ?>
+            </select>
+            <p class="help-text">e.g. Option list can be edited in <a href="admin.php?page=<?php echo self::PLUGIN_DOMAIN; ?>"><?php __( 'Settings', self::TEXT_DOMAIN ); ?></a></p>
+          </div>
         </div>
         <div class="diy-input-group">
           <label for="diy-project-meta-length">How long will the Project Take?</label>
-          <input id="diy-project-meta-length" type="text" name="_<?php echo self::PREFIX; ?>time" class="regular-text diy-project-meta-length" value="<?php echo $time; ?>">
+          <div class="diy-input-wrap">
+            <input id="diy-project-meta-length" type="text" name="_<?php echo self::PREFIX; ?>time" class="regular-text diy-project-meta-length" value="<?php echo $time; ?>">
+            <p class="help-text">e.g. 4 Hours, 2 Days, 15 minutes</p>
+          </div>
         </div>
         <div class="diy-input-group">
           <label for="diy-project-meta-cost">How Much with the Project Cost?</label>
-          <div class="diy-project-meta-cost">
+          <div class="diy-input-wrap diy-project-meta-cost">
             <input id="diy-project-meta-cost" type="text" name="_<?php echo self::PREFIX; ?>cost" class="regular-text" value="<?php echo $cost; ?>">
+            <p class="help-text">e.g. 1,000, 500, 40.50</p>
           </div>
         </div>
       <?php

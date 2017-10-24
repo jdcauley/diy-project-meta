@@ -33,7 +33,7 @@ class DIY_Project_Meta {
   }
 
   function plugin_add_settings_link ( $links ) {
-    $settings_link = '<a href="admin.php?page=' . self::PLUGIN_DOMAIN . '">' . __( 'Settings' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=' . self::PLUGIN_DOMAIN . '">' . __( 'Settings', self::TEXT_DOMAIN ) . '</a>';
     array_push( $links, $settings_link );
     return $links;
   }
