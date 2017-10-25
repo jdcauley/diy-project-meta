@@ -12,10 +12,6 @@
 
     }
 
-    function tearDown() {
-      $this->DIY->plugin_deactivation();
-    }
-
     function test_term_created() {
 
       $terms = get_taxonomies();
