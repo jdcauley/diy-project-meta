@@ -61,15 +61,15 @@
 
       if ( count($post_terms) > 0 ) {
         $post_term = $post_terms[0];
-        $difficulty = '<span class="diy-meta-entry diy-meta-difficulty ' . $post_Term->slug . '"><span class="diy-meta-title">Project Difficulty:</span> <span class="diy-meta-field">' . $post_term->name . '</span></span>';
+        $difficulty = '<span class="diy-meta-entry diy-meta-difficulty ' . $post_term->slug . '"><span class="diy-meta-title">Project Difficulty:</span> <span class="diy-meta-field">' . $post_term->name . '</span></span>';
       }
 
       if ( $time ) {
-        $time = '<span class="diy-meta-entry diy-meta-time ' . $post_Term->slug . '"><span class="diy-meta-title">Estimated Time:</span> <span class="diy-meta-field">' . $time . '</span></span>';
+        $time = '<span class="diy-meta-entry diy-meta-time ' . $post_term->slug . '"><span class="diy-meta-title">Estimated Time:</span> <span class="diy-meta-field">' . $time . '</span></span>';
       }
 
       if ( $cost ) {
-        $cost = '<span class="diy-meta-entry diy-meta-time ' . $post_Term->slug . '"><span class="diy-meta-title">Estimated Cost:</span> <span class="diy-meta-field">$' . $cost . '</span></span>';
+        $cost = '<span class="diy-meta-entry diy-meta-time ' . $post_term->slug . '"><span class="diy-meta-title">Estimated Cost:</span> <span class="diy-meta-field">$' . $cost . '</span></span>';
       }
 
 
