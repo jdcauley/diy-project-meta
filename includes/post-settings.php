@@ -137,7 +137,7 @@
                 </option>
               <?php } ?>
             </select>
-            <p class="help-text">e.g. Option list can be edited in <a href="admin.php?page=<?php echo self::PLUGIN_DOMAIN; ?>"><?php __( 'Settings', self::TEXT_DOMAIN ); ?></a></p>
+            <p class="help-text">e.g. Option list can be edited in <a href="admin.php?page=<?php echo self::PLUGIN_DOMAIN; ?>"><?php echo __( 'settings', self::TEXT_DOMAIN ); ?></a>.</p>
           </div>
         </div>
         <div class="diy-input-group">
